@@ -18,6 +18,11 @@ namespace Tesseract.Tooltip
 
         private void Awake()
         {
+            if (_canvasGroup == null)
+                _canvasGroup = GetComponent<CanvasGroup>();
+            if (_tooltipRect == null)
+                _tooltipRect = GetComponent<RectTransform>();
+
             Hide();
         }
 
@@ -31,11 +36,20 @@ namespace Tesseract.Tooltip
         public void UpdateSize()
         {
             Vector2 textSize = _text.GetPreferredValues(_text.text);
-            _tooltipRect.sizeDelta = textSize + _padding;
+            Vector2 size = textSize + _padding;
+            _tooltipRect.sizeDelta = size;
             if (_backgroundRect != null)
             {
-                _backgroundRect.sizeDelta = textSize + _padding;
+                _backgroundRect.sizeDelta = size;
             }
+        }
+
+        /// <summary>
+        /// Get the actual size of the tooltip after text is set.
+        /// </summary>
+        public Vector2 GetSize()
+        {
+            return _tooltipRect.sizeDelta;
         }
 
         public void Show()
@@ -46,9 +60,10 @@ namespace Tesseract.Tooltip
 
         public void Hide()
         {
-            _canvasGroup.alpha = 0f;
+            if (_canvasGroup != null)
+                _canvasGroup.alpha = 0f;
         }
 
-        public bool IsVisible => _canvasGroup.alpha > 0f;
+        public bool IsVisible => _canvasGroup != null && _canvasGroup.alpha > 0f;
     }
 }

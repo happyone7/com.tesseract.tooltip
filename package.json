@@ -1,7 +1,7 @@
 {
   "name": "com.tesseract.tooltip",
   "displayName": "Tesseract Tooltip",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "unity": "6000.0",
   "description": "Generic tooltip system with mouse-follow, slot-based positioning, screen boundary clamping, and CanvasGroup fade.",
   "author": { "name": "Tesseract Studio" },

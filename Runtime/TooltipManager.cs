@@ -60,9 +60,10 @@ namespace Tesseract.Tooltip
             Vector2 slotScreenPos = RectTransformUtility.WorldToScreenPoint(null, slotTransform.position);
             float screenCenter = Screen.width * 0.5f;
 
-            RectTransform tooltipRect = _tooltip.RectTransform;
-            float tooltipHalfWidth = tooltipRect.rect.width * 0.5f;
-            float slotHalfWidth = slotTransform.rect.width * 0.5f;
+            // Use sizeDelta for accurate size after SetText/UpdateSize
+            Vector2 tooltipSize = _tooltip.GetSize();
+            float tooltipHalfWidth = tooltipSize.x * 0.5f;
+            float slotHalfWidth = slotTransform.rect.width * slotTransform.lossyScale.x * 0.5f;
             float totalOffset = tooltipHalfWidth + slotHalfWidth;
 
             // If slot is on right side of screen, show tooltip on left (and vice versa)
@@ -90,12 +91,18 @@ namespace Tesseract.Tooltip
         {
             if (_tooltip == null) return position;
 
+            // Use sizeDelta for accurate clamping regardless of pivot
+            Vector2 size = _tooltip.GetSize();
             RectTransform rect = _tooltip.RectTransform;
-            float halfWidth = rect.rect.width * 0.5f;
-            float halfHeight = rect.rect.height * 0.5f;
+            Vector2 pivot = rect.pivot;
 
-            position.x = Mathf.Clamp(position.x, halfWidth, Screen.width - halfWidth);
-            position.y = Mathf.Clamp(position.y, halfHeight, Screen.height - halfHeight);
+            float minX = size.x * pivot.x;
+            float maxX = Screen.width - size.x * (1f - pivot.x);
+            float minY = size.y * pivot.y;
+            float maxY = Screen.height - size.y * (1f - pivot.y);
+
+            position.x = Mathf.Clamp(position.x, minX, maxX);
+            position.y = Mathf.Clamp(position.y, minY, maxY);
 
             return position;
         }
